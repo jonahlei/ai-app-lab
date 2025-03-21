@@ -26,8 +26,8 @@ export default defineConfig({
   source: {
     globalVars: {
       APP_CONTEXT: {
-        APP_ID: argObj.APP_ID,
-        ACCESS_TOKEN: argObj.ACCESS_TOKEN,
+        ASR_APP_ID: argObj.ASR_APP_ID,
+        ASR_ACCESS_TOKEN: argObj.ASR_ACCESS_TOKEN,
         FAAS_URL: argObj.FAAS_URL,
       },
     },
@@ -45,12 +45,6 @@ export default defineConfig({
         '/api': {
           changeOrigin: true,
           target: argObj.FAAS_URL,
-          onProxyRes: (proxyRes, req, res) => {
-            const target =
-              'https://scssbl15u19f8v2ksh2ig.apigateway-cn-beijing.volceapi.com';
-            proxyRes.headers['x-real-url'] = target + req.url;
-            console.log('devServer proxy', proxyRes.headers, res);
-          },
         },
       },
     },

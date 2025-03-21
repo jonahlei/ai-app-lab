@@ -9,7 +9,7 @@
 [视频地址](https://portal.volccdn.com/obj/volcfe/cloud-universal-doc/upload_252b008a6db53cc49c9d6cd8c1b74a2a.mp4)
 
 ### 直接体验
-[控制台体验](https://console.volcengine.com/ark/region:ark+cn-beijing/assistant/detail?id=bot-20241211162948-5l2kk-procode-preset)
+[控制台体验](https://console.volcengine.com/ark/region:ark+cn-beijing/application/detail?id=bot-20241211162948-5l2kk-procode-preset)
 
 ### 优势
 - 便捷高效的长视频生成：具备一键生成分钟级视频的强大功能，操作流程极简，用户无需复杂设置，仅需输入需求轻松一点，即可快速获得满足需求的长视频作品，极大提升创作效率。
@@ -34,11 +34,7 @@
 - Python 版本要求大于等于 3.8，小于 3.12
 - Poetry 1.6.1 版本 [参考文档](https://python-poetry.org/docs/#installing-with-the-official-installer)
 - Node 版本要求大于等于 16.2.0
-- 火山语音技术相关准备工作，**仅对企业客户开放，您可以先完成企业实名认证后接入使用**
-  - 已创建一个**语音服务**的应用 [创建链接](https://console.volcengine.com/speech/app)
-  - 对该应用已开通**语音合成大模型**和**流式语音识别大模型**两个服务 [参照文档](https://www.volcengine.com/docs/6561/163043)
-    - 注意：**语音合成大模型**从开通到可以使用有大概5-10分钟延迟
-  - 已获取上述两个服务的 APP ID 和 Access Token [参考文档](https://www.volcengine.com/docs/6561/1329505)
+- 获取语音技术产品的 APP ID 和 Access Token，获取方式参见【附录】
 - 火山方舟 API KEY [参考文档](https://www.volcengine.com/docs/82379/1298459#api-key-%E7%AD%BE%E5%90%8D%E9%89%B4%E6%9D%83)
 - 火山引擎 AK SK [参考文档](https://www.volcengine.com/docs/6291/65568)
 - 火山 TOS 桶 [参考文档](https://www.volcengine.com/docs/6349/74830)
@@ -60,12 +56,11 @@
 
    | 配置变量名               | 说明                                    |
    |:--------------------|:--------------------------------------|
-   | TTS_ACCESS_KEY      | 语音技术 API Access Key                   |
-   | TTS_APP_KEY         | 语音技术 App Key                          |
-   | TTS_API_RESOURCE_ID | 语音技术 API Resource ID                  |
+   | TTS_ACCESS_TOKEN      | 语音合成模型 Access Token                  |
+   | TTS_APP_ID         | 语音合成模型 APP ID                          |
    | ARK_API_KEY         | 火山方舟 API Key，用于方舟模型接入点推理时做鉴权          |
-   | VOLC_ACCESS_KEY     | 火山引擎账号 Access Key，用于访问 TOS API，上载模型产物 |
-   | VOLC_SECRET_KEY     | 火山引擎账号 Secret Key，用于访问 TOS API，上载模型产物 |
+   | VOLC_ACCESSKEY     | 火山引擎账号 Access Key，用于访问 TOS API，上载模型产物 |
+   | VOLC_SECRETKEY     | 火山引擎账号 Secret Key，用于访问 TOS API，上载模型产物 |
    | TOS_BUCKET          | 指定生视频模型和配音模型产物的 TOS 储存桶名              |
    | LLM_ENDPOINT_ID     | 脚本创作，分镜，角色和视频描述，调用的大模型接入点 ID          |
    | VLM_ENDPOINT_ID     | 最终视频影片交互，调用的视觉理解大模型接入点 ID             |
@@ -91,26 +86,7 @@
    poetry run python index.py
    ```
 
-5. 后端服务启动后，尝试执行 `test_full_process.py` 脚本，生成视频。
-
-   1. 打开一个新的命令终端窗口
-
-   2. 下载测试依赖包
-
-      ```bash
-      cd demohouse/chat2cartoon/backend
-      source .venv/bin/activate
-
-      poetry install --with test
-      ```
-
-   3. 执行测试脚本
-
-      ```bash
-      poetry run pytest -s tests/e2e_tests
-      ```
-
-6. 启动前端服务
+5. 启动前端服务
    ```bash
    cd demohouse/chat2cartoon/frontend
    npm install -g pnpm@8
@@ -195,7 +171,7 @@ user 请求的 `content` 格式都按照：`{模式} {内容}`
     - CONFIRMATION：确认进入到下一步
     - REGENERATION：对当前步骤或前序步骤进行修改
 - 内容：完整状态的 JSON text 完整状态由前端维护，保存下来当前对话中的脚本信息（storyboards），视频信息（videos）， 
-       音频信息（audios）等。在下一步需要时通过 `user` 消息传入。JSON 内容的格式可以参考 [app/models](./app/models) 目录里的代码。如果模式是 REGENERATION，内容需要加上 `phase={状态}` 
+       音频信息（audios）等。在下一步需要时通过 `user` 消息传入。JSON 内容的格式可以参考 [app/models](./backend/app/models) 目录里的代码。如果模式是 REGENERATION，内容需要加上 `phase={状态}` 
        的前缀来指定要重新生成的 Phase 产物，例如：`"REGENERATION phase=RoleImage {"role_descriptions":"「N个角色，角色描述」"}"`
 
 ##### `assistant` 消息
@@ -295,3 +271,27 @@ assistant 返回的 `content` 格式都按照：`phase={状态} {内容}`
   ]
 }
 ```
+
+## 附录
+
+### 获取 TTS_APP_ID、TTS_ACCESS_TOKEN、ASR_APP_ID、ASR_ACCESS_TOKEN？
+
+1. [完成企业认证](https://console.volcengine.com/user/authentication/detail/)
+
+2. [开通语音技术产品](https://console.volcengine.com/speech/app)
+
+3. [创建应用](https://console.volcengine.com/speech/app)，同时勾选大模型语音合成和流式语音识别大模型
+    ![alt text](assets/faq1.png)
+
+4. 开通语音合成大模型，确保页面具有音色。注意：语音合成大模型从开通到可以使用有大概5-10分钟延迟
+   ![alt text](assets/faq2.png)
+   ![alt text](assets/faq3.png)
+
+5. 流式语音识别大模型有试用包，可以不开通。如需提供稳定服务，建议开通正式版本。
+   ![alt text](assets/faq4.png)
+
+6. 获取TTS_APP_ID 和TTS_ACCESS_TOKEN
+   ![alt text](assets/faq5.png)
+
+7. 获取ASR_APP_ID、ASR_ACCESS_TOKEN
+   ![alt text](assets/faq6.png)
