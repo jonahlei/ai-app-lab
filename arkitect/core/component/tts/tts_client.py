@@ -18,7 +18,6 @@ from typing import Any, AsyncIterable, Optional, Union
 
 import websockets
 
-from arkitect.core.component.llm.model import ArkChatCompletionChunk, ArkChatResponse
 from arkitect.core.component.tts.base import AsyncBaseTTSClient, TTSResponseChunk
 from arkitect.core.component.tts.constants import (
     NAMESPACE,
@@ -39,6 +38,7 @@ from arkitect.core.component.tts.utils import parse_response
 from arkitect.core.errors import InvalidParameter
 from arkitect.telemetry.logger import ERROR, INFO
 from arkitect.telemetry.trace import task
+from arkitect.types.llm.model import ArkChatCompletionChunk, ArkChatResponse
 
 __all__ = ["AsyncTTSClient"]
 
@@ -61,7 +61,7 @@ class AsyncTTSClient(AsyncBaseTTSClient):
         self.log_id = log_id
         self.base_url = base_url
 
-        self.conn: Optional[websockets.WebSocketClientProtocol] = None
+        self.conn: Optional[websockets.WebSocketClientProtocol] = None  # type: ignore
         self.session_id: Optional[str] = None
         self.connection_params: ConnectionParams = connection_params
         self.inited = False
@@ -72,7 +72,7 @@ class AsyncTTSClient(AsyncBaseTTSClient):
     ) -> None:
         headers = self._build_http_header()
         INFO("with logID: %s , header: %s", self.log_id, headers)
-        self.conn = await websockets.connect(self.base_url, extra_headers=headers)
+        self.conn = await websockets.connect(self.base_url, additional_headers=headers)
         INFO("Dial server with LogID: %s", self.log_id)
         # Create a new message with type MsgTypeFullClient and flag MsgTypeFlagWithEvent
         msg = Message(event=EventStartConnection)

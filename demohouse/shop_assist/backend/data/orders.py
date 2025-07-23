@@ -1,7 +1,7 @@
 # Copyright (c) 2025 Bytedance Ltd. and/or its affiliates
 # Licensed under the 【火山方舟】原型应用软件自用许可协议
 # you may not use this file except in compliance with the License.
-# You may obtain a copy of the License at 
+# You may obtain a copy of the License at
 #     https://www.volcengine.com/docs/82379/1433703
 # Unless required by applicable law or agreed to in writing, software
 # distributed under the License is distributed on an "AS IS" BASIS,
@@ -15,12 +15,18 @@ from enum import Enum
 from typing import Dict, List, Optional
 
 from .cache import LRUCache
+import sys
+import os
+
+# Add the parent directory to sys.path to import config
+sys.path.insert(0, os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
+from config import language
 
 
 class OrderStatus(str, Enum):
-    SHIPPED = "已发货"
-    PENDING = "未发货"
-    REFUNDED = "已退款"
+    SHIPPED = "已发货" if language == "zh" else "Shipped"
+    PENDING = "未发货" if language == "zh" else "Not Shipped"
+    REFUNDED = "已退款" if language == "zh" else "Refunded"
 
 
 @dataclass
@@ -117,24 +123,32 @@ class InMemoryOrderStorage(OrderStorage):
         # Get cached orders or initialize new ones
         orders = self._orders.get(account_id)
         if orders is None:
+            # Product names based on language setting
+
             orders = {
                 f"{account_id}_1": Order(
                     order_id=f"{account_id}_1",
                     status=OrderStatus.SHIPPED,
-                    product="车载收纳盒",
+                    product="车载收纳盒"
+                    if language == "zh"
+                    else "Women's Floral Graphic T-Shirts",
                     account_id=account_id,
                     tracking_number=f"SF{account_id}10001",  # Fake tracking number for shipped order
                 ),
                 f"{account_id}_2": Order(
                     order_id=f"{account_id}_2",
                     status=OrderStatus.PENDING,
-                    product="汽车遮阳挡",
+                    product="汽车遮阳挡"
+                    if language == "zh"
+                    else "Long Sleeve V Neck Blouses",
                     account_id=account_id,
                 ),
                 f"{account_id}_3": Order(
                     order_id=f"{account_id}_3",
                     status=OrderStatus.PENDING,
-                    product="可爱风腰靠垫",
+                    product="可爱风腰靠垫"
+                    if language == "zh"
+                    else "Unisex Vintage Baseball Cap",
                     account_id=account_id,
                 ),
             }
